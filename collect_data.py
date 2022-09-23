@@ -480,7 +480,7 @@ def create_snapshot(data):
     writer = csv.DictWriter(output, fieldnames=FIELDNAMES, escapechar="\\")
     writer.writeheader()
     writer.writerows(data)
-    print(f"Output {filename}")
+    tqdm.write(f"Output {filename}")
 
 def filter_used_addresses(db, addresses):
   with db.begin() as txn:
@@ -542,7 +542,7 @@ async def main():
       addresses = await seaport.find_addresses()
       addresses = filter_used_addresses(db, addresses)
       if len(addresses) > 0:
-        print("Seaport: Retrieved", len(addresses), "addresses")
+        tqdm.write(f"Seaport: Retrieved {len(addresses)} addresses")
         data = await query_alert_data(forta, "Seaport", addresses)
         create_snapshot(data)
         update_used_addresses(db, addresses)
@@ -553,7 +553,7 @@ async def main():
       addresses = await looksrare.find_addresses()
       addresses = filter_used_addresses(db, addresses)
       if len(addresses) > 0:
-        print("LooksRare: Retrieved", len(addresses), "addresses")
+        tqdm.write(f"LooksRare: Retrieved {len(addresses)} addresses")
         data = await query_alert_data(forta, "LooksRare", addresses)
         create_snapshot(data)
         update_used_addresses(db, addresses)
