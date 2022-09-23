@@ -448,7 +448,7 @@ async def query_alert_data(forta, source, addresses):
 
   progress = tqdm(
     total=len(addresses) * len(BOTS),
-    desc=f"{source}: Querying alerts",
+    desc=f"{source} alerts",
     position=source_to_position(source),
     leave=False,
   )
@@ -463,7 +463,7 @@ async def query_alert_data(forta, source, addresses):
 
   return data
 
-def create_snapshot(data):
+def create_snapshot(source, data):
   if len(data) == 0:
     return
 
@@ -480,7 +480,8 @@ def create_snapshot(data):
     writer = csv.DictWriter(output, fieldnames=FIELDNAMES, escapechar="\\")
     writer.writeheader()
     writer.writerows(data)
-    tqdm.write(f"Output {filename}")
+  
+  tqdm.write(f"{source}: Output {filename}")
 
 def filter_used_addresses(db, addresses):
   with db.begin() as txn:
@@ -544,7 +545,7 @@ async def main():
       if len(addresses) > 0:
         tqdm.write(f"Seaport: Retrieved {len(addresses)} addresses")
         data = await query_alert_data(forta, "Seaport", addresses)
-        create_snapshot(data)
+        create_snapshot("Seaport", data)
         update_used_addresses(db, addresses)
       await seaport.sleep()
 
@@ -555,7 +556,7 @@ async def main():
       if len(addresses) > 0:
         tqdm.write(f"LooksRare: Retrieved {len(addresses)} addresses")
         data = await query_alert_data(forta, "LooksRare", addresses)
-        create_snapshot(data)
+        create_snapshot("LooksRare", data)
         update_used_addresses(db, addresses)
       await looksrare.sleep()
 
