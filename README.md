@@ -2,6 +2,10 @@
 
 Collection, analysis and visualization of NFT threat detection datasets.
 
+## Installation
+
+`pip3 install -r requirements.txt`
+
 ## Collection
 
 First create a Mainnet Infura endpoint:
