@@ -70,7 +70,7 @@ class Wyvern:
         crawl_filter = self.contract.events.OrdersMatched.createFilter(fromBlock=fromBlock, toBlock=toBlock)
         entries = crawl_filter.get_all_entries()
       except ValueError as e:
-        if e.args[0]["message"] == "query returned more than 10000 results":
+        if "message" in e.args[0] and e.args[0]["message"] == "query returned more than 10000 results":
           self.step = self.step * 4 // 5
           return await self.find_addresses()
         else:
@@ -141,7 +141,7 @@ class Seaport:
         crawl_filter = self.contract.events.OrderFulfilled.createFilter(fromBlock=fromBlock, toBlock=toBlock)
         entries = crawl_filter.get_all_entries()
       except ValueError as e:
-        if e.args[0]["message"] == "query returned more than 10000 results":
+        if "message" in e.args[0] and e.args[0]["message"] == "query returned more than 10000 results":
           self.step = self.step * 4 // 5
           return await self.find_addresses()
         else:
@@ -216,7 +216,7 @@ class LooksRare:
         )
         entries = ask_entries + bid_entries
       except ValueError as e:
-        if e.args[0]["message"] == "query returned more than 10000 results":
+        if "message" in e.args[0] and e.args[0]["message"] == "query returned more than 10000 results":
           self.step = self.step * 4 // 5
           return await self.find_addresses()
         else:
@@ -280,7 +280,7 @@ class Rarible:
       crawl_filter = self.contract.events.Match.createFilter(fromBlock=fromBlock, toBlock=toBlock)
       entries = crawl_filter.get_all_entries()
       # except ValueError as e:
-      #   if e.args[0]["message"] == "query returned more than 10000 results":
+      #   if "message" in e.args[0] and e.args[0]["message"] == "query returned more than 10000 results":
       #     self.step = self.step * 4 // 5
       #     return await self.find_addresses()
       #   else:
@@ -345,7 +345,7 @@ class Foundation:
         crawl_filter = self.contract.events.BuyPriceAccepted.createFilter(fromBlock=fromBlock, toBlock=toBlock)
         entries = crawl_filter.get_all_entries()
       except ValueError as e:
-        if e.args[0]["message"] == "query returned more than 10000 results":
+        if "message" in e.args[0] and e.args[0]["message"] == "query returned more than 10000 results":
           self.step = self.step * 4 // 5
           return await self.find_addresses()
         else:
