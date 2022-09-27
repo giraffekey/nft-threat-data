@@ -75,11 +75,9 @@ class ContractEventTracker:
       try:
         entries = await self.crawl_events(fromBlock, toBlock)
       except ValueError as e:
-        if "message" in e.args[0] and e.args[0]["message"] == "query returned more than 10000 results":
-          self.step = self.step * 4 // 5
-          return await self.find_addresses()
-        else:
-          raise e
+        self.step = self.step * 4 // 5
+        await self.sleep()
+        return await self.find_addresses()
 
       if toBlock == self.start_block:
         self.crawl_finished = True
@@ -90,12 +88,9 @@ class ContractEventTracker:
       try:
         entries.extend(await self.poll_events())
         break
-      except ValueError as e:
-        if "message" in e.args[0] and e.args[0]["message"] == "query returned more than 10000 results":
-          await self.sleep()
-          continue
-        else:
-          raise e
+      except ValueError:
+        await self.sleep()
+        continue
 
     return self.extract_addresses(entries)
 
