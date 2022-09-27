@@ -2,7 +2,8 @@ import os
 import shutil
 import pandas as pd
 
-FIELDNAMES = ["asset", "platform", "alert_id", "severity", "name", "description"]
+from collect_data import FIELDNAMES
+
 
 if __name__ == "__main__":
   files = []
