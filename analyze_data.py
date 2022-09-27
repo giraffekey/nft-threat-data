@@ -1,8 +1,11 @@
 import numpy as np
 import pandas as pd
 
+
 PLATFORMS = ["OpenSea", "LooksRare", "Foundation"]
+
 SEVERITIES = ["SAFE", "LOW", "MEDIUM", "HIGH", "CRITICAL"]
+
 
 def asset_alerts_data(df):
   data = df.value_counts("asset").to_dict().items()
@@ -47,6 +50,7 @@ def platform_severity_percent_data(df):
     data.append(row)
 
   return pd.DataFrame(data, columns=["platform", *SEVERITIES])
+
 
 if __name__ == "__main__":
   df = pd.read_csv("dataset.csv")

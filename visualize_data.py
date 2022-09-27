@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 
 import analyze_data
 
+
 def plot_alert_id_alerts_data(df):
   df = analyze_data.alert_id_alerts_data(df)
 
@@ -72,6 +73,7 @@ def plot_platform_severity_data(df):
   plt.ylabel("Severity %")
   plt.title("Platform Severity Distribution")
   plt.legend()
+
 
 if __name__ == "__main__":
   df = pd.read_csv("dataset.csv")
