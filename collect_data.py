@@ -342,8 +342,20 @@ class Foundation:
         txn.put(b"foundation_block", json.dumps(fromBlock).encode())
 
       try:
-        crawl_filter = self.contract.events.BuyPriceAccepted.createFilter(fromBlock=fromBlock, toBlock=toBlock)
-        entries = crawl_filter.get_all_entries()
+        buy_crawl_filter = self.contract.events.BuyPriceSet.createFilter(fromBlock=fromBlock, toBlock=toBlock)
+        auction_crawl_filter = self.contract.events.ReserveAuctionCreated.createFilter(fromBlock=fromBlock, toBlock=toBlock)
+        offer_crawl_filter = self.contract.events.OfferMade.createFilter(fromBlock=fromBlock, toBlock=toBlock)
+
+        async def get_buy_entries(): return buy_crawl_filter.get_all_entries()
+        async def get_auction_entries(): return auction_crawl_filter.get_all_entries()
+        async def get_offer_entries(): return offer_crawl_filter.get_all_entries()
+
+        [buy_entries, auction_entries, offer_entries] = await asyncio.gather(
+          asyncio.create_task(get_buy_entries()),
+          asyncio.create_task(get_auction_entries()),
+          asyncio.create_task(get_offer_entries()),
+        )
+        entries = buy_entries + auction_entries + offer_entries
       except ValueError as e:
         if "message" in e.args[0] and e.args[0]["message"] == "query returned more than 10000 results":
           self.step = self.step * 4 // 5
