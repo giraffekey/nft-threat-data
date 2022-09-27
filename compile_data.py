@@ -1,44 +1,36 @@
-import csv
 import os
 import shutil
+import pandas as pd
 
 FIELDNAMES = ["asset", "platform", "alert_id", "severity", "name", "description"]
 
 if __name__ == "__main__":
-  print("Compiling dataset...")
-
   files = []
 
-  for folder in os.listdir("cache/snapshots"):
-    for file in os.listdir(f"cache/snapshots/{folder}"):
-      if file.endswith(".csv"):
-        files.append(f"cache/snapshots/{folder}/{file}")
+  if os.path.exists("dataset.csv"):
+    files.append("dataset.csv")
 
-  if len(files) == 0:
+  if os.path.exists("cache/snapshots"):
+    for folder in os.listdir("cache/snapshots"):
+      for file in os.listdir(f"cache/snapshots/{folder}"):
+        if file.endswith(".csv"):
+          files.append(f"cache/snapshots/{folder}/{file}")
+
+  if len(files) == 0 or files == ["dataset.csv"]:
+    print("Nothing to compile")
     exit()
 
-  rows = []
+  print("Compiling dataset...")
 
-  if os.path.exists("dataset.csv"):
-    with open("dataset.csv", "r", newline="") as dataset:
-      reader = csv.DictReader(dataset)
-      for row in reader:
-        rows.append(row)
+  df = pd.DataFrame([], columns=FIELDNAMES)
 
   for path in files:
-    with open(path, "r", newline="") as file:
-      reader = csv.DictReader(file)
-      for row in reader:
-        rows.append(row)
+    df = pd.concat([df, pd.read_csv(path)])
 
-  # Remove duplicates
-  rows = [dict(item) for item in set(frozenset(row.items()) for row in rows)]
+  df = df.drop_duplicates()
+  df = df.sort_values("asset")
+  df.to_csv("dataset.csv", index=False, escapechar="\\")
 
-  with open("dataset.csv", "w", newline="") as dataset:
-    writer = csv.DictWriter(dataset, fieldnames=FIELDNAMES, escapechar="\\")
-    writer.writeheader()
-    writer.writerows(rows)
-
-  print(f"Compiled dataset.csv")
+  print("Compiled dataset.csv")
 
   shutil.rmtree("cache/snapshots")
