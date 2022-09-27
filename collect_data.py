@@ -1,5 +1,4 @@
 import atexit
-import csv
 from datetime import datetime
 import json
 import math
@@ -17,6 +16,8 @@ from web3 import Web3
 
 import lmdb
 from tqdm import tqdm
+
+import pandas as pd
 
 
 FIELDNAMES = ["asset", "platform", "alert_id", "severity", "name", "description"]
@@ -557,10 +558,8 @@ def create_snapshot(source, data):
   if not os.path.isdir(folder):
     os.mkdir(folder)
 
-  with open(f"{folder}/{filename}", "w", newline="") as output:
-    writer = csv.DictWriter(output, fieldnames=FIELDNAMES, escapechar="\\")
-    writer.writeheader()
-    writer.writerows(data)
+  df = pd.DataFrame(data, columns=FIELDNAMES)
+  df.to_csv(f"{folder}/{filename}", index=False, escapechar="\\")
   
   tqdm.write(f"{source}: Output {filename}")
 
