@@ -1,3 +1,4 @@
+from datetime import datetime
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -21,9 +22,7 @@ def plot_severity_alerts_data(df):
 
   plt.figure(1)
 
-  plt.bar(df["severity"], df["alerts"], color=["green", "lime", "yellow", "orange", "red"])
-  plt.xlabel("Severity")
-  plt.ylabel("Alerts")
+  plt.pie(df["alerts"], labels=df["severity"], colors=["green", "lime", "yellow", "orange", "red"])
   plt.title("Alerts per Severity")
 
 def plot_asset_severity_alerts_data(df):
@@ -62,17 +61,27 @@ def plot_platform_severity_data(df):
   plt.figure(4)
 
   width = 0.15
-  plt.bar(x_axis-width*2, df["SAFE"], width, label="Safe", color="green")
-  plt.bar(x_axis-width, df["LOW"], width, label="Low", color="lime")
-  plt.bar(x_axis, df["MEDIUM"], width, label="Medium", color="yellow")
-  plt.bar(x_axis+width, df["HIGH"], width, label="High", color="orange")
-  plt.bar(x_axis+width*2, df["CRITICAL"], width, label="Critical", color="red")
+  plt.bar(x_axis-width*2, df["SAFE"], width, label="SAFE", color="green")
+  plt.bar(x_axis-width, df["LOW"], width, label="LOW", color="lime")
+  plt.bar(x_axis, df["MEDIUM"], width, label="MEDIUM", color="yellow")
+  plt.bar(x_axis+width, df["HIGH"], width, label="HIGH", color="orange")
+  plt.bar(x_axis+width*2, df["CRITICAL"], width, label="CRITICAL", color="red")
 
   plt.xticks(x_axis, df["platform"])
   plt.xlabel("Platform")
   plt.ylabel("Severity %")
   plt.title("Platform Severity Distribution")
   plt.legend()
+
+def plot_alerts_time_data(df):
+  plt.figure(5)
+
+  data = df["created_at"].apply(lambda time: pd.to_datetime(time, format="%Y-%m-%dT%H:%M:%S.%fZ"))
+  plt.hist(data)
+
+  plt.gcf().autofmt_xdate()
+  plt.title("Alerts Over Time")
+  plt.legend(["Alerts"])
 
 
 if __name__ == "__main__":
@@ -82,4 +91,5 @@ if __name__ == "__main__":
   plot_asset_severity_alerts_data(df)
   plot_platform_alerts_assets_data(df)
   plot_platform_severity_data(df)
+  plot_alerts_time_data(df)
   plt.show()
